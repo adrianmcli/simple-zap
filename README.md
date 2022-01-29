@@ -13,3 +13,11 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
+
+# Environment Variables
+
+Create a `.env` file at the project root with the following:
+
+```
+RPC_URL=https://eth-mainnet.alchemyapi.io/v2/<alchemy_api_key>
+```
