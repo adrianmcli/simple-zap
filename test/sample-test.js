@@ -14,3 +14,7 @@ describe("Foo", function () {
     );
   });
 });
+
+// TODO give myself USDC
+// TODO give mysef ETH
+// TODO use router to swap USDC -> ETH
