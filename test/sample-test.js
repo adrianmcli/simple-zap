@@ -5,6 +5,7 @@ const FiatTokenV2ABI = require("./ABIs/FiatTokenV2.json");
 describe("Foo", function () {
   let foo;
   this.beforeAll("", async function () {
+    // setup Foo contract
     const Foo = await ethers.getContractFactory("Foo");
     foo = await Foo.deploy();
     await foo.deployed();
@@ -38,10 +39,40 @@ describe("Foo", function () {
     await usdc.connect(user).configureMinter(userAddress, amount);
     await usdc.connect(user).mint(userAddress, amount);
 
+    // assertions
     const after = await usdc.balanceOf(userAddress);
     expect(after.sub(before)).to.equal(amount);
   });
-});
 
-// TODO give mysef ETH
-// TODO use router to swap USDC -> ETH
+  it("Can swap USDC -> ETH", async function () {
+    const { provider, utils } = ethers;
+    const user = await provider.getSigner(0);
+    const userAddress = await user.getAddress();
+
+    // setup contract
+    const usdcAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // USDC
+    const usdc = new ethers.Contract(usdcAddress, FiatTokenV2ABI, user);
+
+    const amount = utils.parseUnits("1000", 6);
+
+    // approval for contract to spend my USDC
+    await usdc.approve(foo.address, amount);
+
+    // record balances before swap
+    const usdcBefore = await usdc.balanceOf(userAddress);
+    const ethBefore = await provider.getBalance(userAddress);
+
+    // execute swap
+    await foo.connect(user).swapUSDCToEth(amount, ethers.constants.Zero);
+
+    // record balances after swap
+    const usdcAfter = await usdc.balanceOf(userAddress);
+    const ethAfter = await provider.getBalance(userAddress);
+
+    // assertions
+    const usdcLost = utils.formatUnits(usdcBefore.sub(usdcAfter), 6);
+    const ethGained = utils.formatEther(ethAfter.sub(ethBefore));
+    expect(usdcLost).to.equal("1000.0");
+    expect(ethGained).to.equal("0.382814970351085195");
+  });
+});
