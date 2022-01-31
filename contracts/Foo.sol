@@ -18,8 +18,10 @@ contract Foo {
 
     function swapUSDCToEth(uint exactUsdcAmount, uint minEthAmount) public returns (uint) {
         // get USDC from user into this contract
-        IERC20(usdcAddress).approve(UniV2RouterAddress, exactUsdcAmount);
         IERC20(usdcAddress).transferFrom(msg.sender, address(this), exactUsdcAmount);
+        
+        // allow UniswapV2 Router to spend this contract's USDC
+        IERC20(usdcAddress).approve(UniV2RouterAddress, exactUsdcAmount);
 
         // build the path for swapping
         address[] memory path = new address[](2);
