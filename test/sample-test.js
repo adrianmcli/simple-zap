@@ -73,6 +73,6 @@ describe("Foo", function () {
     const usdcLost = utils.formatUnits(usdcBefore.sub(usdcAfter), 6);
     const ethGained = utils.formatEther(ethAfter.sub(ethBefore));
     expect(usdcLost).to.equal("1000.0");
-    expect(ethGained).to.equal("0.382814970351085195");
+    expect(ethGained).to.equal("0.382814971421528175");
   });
 });
