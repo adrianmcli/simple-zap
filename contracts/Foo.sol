@@ -6,9 +6,11 @@ import "./interfaces/IUniswapV2Router02.sol";
 import "./interfaces/IERC20.sol";
 
 contract Foo {
-    IUniswapV2Router02 private constant router =  IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
     address private constant usdcAddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address private constant wethAddress = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address private constant UniV2RouterAddress = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+    
+    IUniswapV2Router02 private constant router =  IUniswapV2Router02(UniV2RouterAddress);
 
     function getWETHAddress() public pure returns (address) {
         return router.WETH();
@@ -16,7 +18,7 @@ contract Foo {
 
     function swapUSDCToEth(uint exactUsdcAmount, uint minEthAmount) public returns (uint) {
         // get USDC from user into this contract
-        IERC20(usdcAddress).approve(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D, exactUsdcAmount);
+        IERC20(usdcAddress).approve(UniV2RouterAddress, exactUsdcAmount);
         IERC20(usdcAddress).transferFrom(msg.sender, address(this), exactUsdcAmount);
 
         // build the path for swapping
